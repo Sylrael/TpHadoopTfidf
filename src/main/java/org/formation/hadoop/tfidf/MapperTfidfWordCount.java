@@ -1,7 +1,6 @@
 package org.formation.hadoop.tfidf;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
@@ -24,7 +23,7 @@ public class MapperTfidfWordCount extends Mapper<LongWritable, Text, WordDocname
 	Set<String> stopwordsList = new HashSet<String>();
 	
 	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-		StringTokenizer tokens = new StringTokenizer(value.toString(), "\"\' ,:();-.?!*+%/\\<>|_][{}0123456789\t");
+		StringTokenizer tokens = new StringTokenizer(value.toString(), "\" ,:();-.?!*+%/\\<>|_][{}0123456789\t");
 		// Retrieving cached file containing stopwords to skip
 		cachedFiles = context.getLocalCacheFiles();
 		

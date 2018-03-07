@@ -8,12 +8,21 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 public class WordDocnameWritable implements WritableComparable<WordDocnameWritable> {
-		private Text mot = new Text();
-		private Text docId = new Text();
+	private Text mot = new Text();
+	private Text docId = new Text();
+
+	public WordDocnameWritable() {
+	}
+
+	public WordDocnameWritable(Text mot, Text docId) {
+		super();
+		this.mot = new Text(mot);
+		this.docId = new Text(docId);
+	}
 
 	public void readFields(DataInput arg0) throws IOException {
 		mot.readFields(arg0);
-		docId.readFields(arg0);		
+		docId.readFields(arg0);
 	}
 
 	public void write(DataOutput arg0) throws IOException {
@@ -34,7 +43,7 @@ public class WordDocnameWritable implements WritableComparable<WordDocnameWritab
 	}
 
 	public void setMot(Text mot) {
-		this.mot = mot;
+		this.mot = new Text(mot.toString());
 	}
 
 	public Text getDocId() {
@@ -42,14 +51,12 @@ public class WordDocnameWritable implements WritableComparable<WordDocnameWritab
 	}
 
 	public void setDocId(Text docId) {
-		this.docId = docId;
+		this.docId = new Text(docId.toString());
 	}
 
 	@Override
 	public String toString() {
-		return docId+" "+mot;
+		return docId + "\t" + mot;
 	}
-	
-	
-	
+
 }
