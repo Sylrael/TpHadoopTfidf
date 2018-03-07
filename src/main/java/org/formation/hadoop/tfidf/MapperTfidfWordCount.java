@@ -14,32 +14,33 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
-public class MapperTfidfWordCount extends Mapper<LongWritable, Text, WordDocnameWritable, IntWritable>{
+public class MapperTfidfWordCount extends Mapper<LongWritable, Text, WordDocnameWritable, IntWritable> {
 	IntWritable valeur = new IntWritable(1);
 	WordDocnameWritable cle = new WordDocnameWritable();
-	
+
 	String filename = "";
 	Path[] cachedFiles;
 	Set<String> stopwordsList = new HashSet<String>();
-	
-	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-		StringTokenizer tokens = new StringTokenizer(value.toString(), "\" ,:();-.?!*+%/\\<>|_][{}0123456789\t");
+
+	protected void setup(Context context) throws IOException, InterruptedException {
 		// Retrieving cached file containing stopwords to skip
 		cachedFiles = context.getLocalCacheFiles();
-		
-		// Retrieving name of file to treat
-		filename = ((FileSplit) context.getInputSplit()).getPath().getName();
-		
+
 		// Creating Set of stopwords
-		BufferedReader fis = new BufferedReader (new FileReader(cachedFiles[0].toString()));
+		BufferedReader fis = new BufferedReader(new FileReader(cachedFiles[0].toString()));
 		String stopword = "";
 		while ((stopword = fis.readLine()) != null) {
 			stopwordsList.add(stopword);
 		}
+	}
+
+	protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+		StringTokenizer tokens = new StringTokenizer(value.toString(), "\" ,:();-.?!*+%/\\<>|_][{}0123456789\t");
+		// Retrieving name of file to treat
+		filename = ((FileSplit) context.getInputSplit()).getPath().getName();
 		
 		// Treating file
-		while (tokens.hasMoreTokens())
-		{
+		while (tokens.hasMoreTokens()) {
 			String mot = tokens.nextToken().toLowerCase();
 			if (mot.length() > 2 && !stopwordsList.contains(mot)) {
 				cle.setMot(new Text(mot));

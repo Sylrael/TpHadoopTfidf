@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -15,6 +16,10 @@ import org.formation.hadoop.tfidf.job2.GroupingComparatorWordPerDoc;
 import org.formation.hadoop.tfidf.job2.MapperTfidfWordPerDoc;
 import org.formation.hadoop.tfidf.job2.PartitionerWordPerDoc;
 import org.formation.hadoop.tfidf.job2.ReducerTfidfWordPerDoc;
+import org.formation.hadoop.tfidf.job3.GroupingComparatorCalculTfidf;
+import org.formation.hadoop.tfidf.job3.MapperTfidfCalculTfidf;
+import org.formation.hadoop.tfidf.job3.PartitionerCalculTfidf;
+import org.formation.hadoop.tfidf.job3.ReducerTfidfCalculTfidf;
 
 /**
  * Hello world!
@@ -29,23 +34,27 @@ public class App {
 
 		Path inputFilePath2 = new Path("tfidf/output/job1/part-r-00000");
 		Path outputFilePath2 = new Path("tfidf/output/job2");
+		
+		Path inputFilePath3 = new Path("tfidf/output/job2/part-r-00000");
+		Path outputFilePath3 = new Path("tfidf/output/job3");
 
 		// Job 1
-		//launchJob1(inputFilePath, outputFilePath);
-		launchJob2(inputFilePath2, outputFilePath2);
+		//launchJobWordCount(inputFilePath, outputFilePath);
 		// Job 2
+		//launchJobWordPerDoc(inputFilePath2, outputFilePath2);
+		// Job 3
+		launchJob3(inputFilePath3, outputFilePath3);
 
 	}
 
-	public static void launchJob1(Path in, Path out) throws IOException, ClassNotFoundException, InterruptedException {
+	public static void launchJobWordCount(Path in, Path out)
+			throws IOException, ClassNotFoundException, InterruptedException {
 		// Job configuration
-
 		Configuration conf = new Configuration();
 		Job job = new Job(conf, "TfIdfWordCount");
+		
 		FileSystem fs = FileSystem.newInstance(conf);
-
-		if(fs.exists(out))
-		{
+		if (fs.exists(out)) {
 			fs.delete(out, true);
 		}
 
@@ -53,8 +62,8 @@ public class App {
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 
-		FileInputFormat.addInputPath(job,in);
-		FileOutputFormat.setOutputPath(job,out);
+		FileInputFormat.addInputPath(job, in);
+		FileOutputFormat.setOutputPath(job, out);
 
 		// set ouput key as Text and value as IntWritable
 		job.setOutputKeyClass(WordDocnameWritable.class);
@@ -70,16 +79,16 @@ public class App {
 		job.setJarByClass(App.class);
 		job.waitForCompletion(true);
 	}
-	
-	public static void launchJob2(Path in, Path out) throws IOException, ClassNotFoundException, InterruptedException {
+
+	public static void launchJobWordPerDoc(Path in, Path out)
+			throws IOException, ClassNotFoundException, InterruptedException {
 		// Job configuration
 
 		Configuration conf = new Configuration();
 		Job job = new Job(conf, "TfIdfWordPerDoc");
 		FileSystem fs = FileSystem.newInstance(conf);
 
-		if(fs.exists(out))
-		{
+		if (fs.exists(out)) {
 			fs.delete(out, true);
 		}
 
@@ -87,15 +96,15 @@ public class App {
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
 
-		FileInputFormat.addInputPath(job,in);
-		FileOutputFormat.setOutputPath(job,out);
+		FileInputFormat.addInputPath(job, in);
+		FileOutputFormat.setOutputPath(job, out);
 
 		// set ouput key as Text and value as IntWritable
 		job.setMapOutputKeyClass(WordDocnameWritable.class);
 		job.setMapOutputValueClass(IntWritable.class);
 		job.setOutputKeyClass(WordDocnameWritable.class);
 		job.setOutputValueClass(WordcountWordperdocWritable.class);
-		
+
 		// Partitioning/Grouping
 		job.setPartitionerClass(PartitionerWordPerDoc.class);
 		job.setGroupingComparatorClass(GroupingComparatorWordPerDoc.class);
@@ -107,5 +116,41 @@ public class App {
 		job.setJarByClass(App.class);
 		job.waitForCompletion(true);
 	}
-	
+
+	public static void launchJob3(Path in, Path out) throws IOException, ClassNotFoundException, InterruptedException {
+		// Job configuration
+
+		Configuration conf = new Configuration();
+		Job job = new Job(conf, "TfIdfCalculTfIdf");
+		FileSystem fs = FileSystem.newInstance(conf);
+
+		if (fs.exists(out)) {
+			fs.delete(out, true);
+		}
+
+		// Job 3 : Calcul du Tf-Idf
+		job.setInputFormatClass(TextInputFormat.class);
+		job.setOutputFormatClass(TextOutputFormat.class);
+
+		FileInputFormat.addInputPath(job, in);
+		FileOutputFormat.setOutputPath(job, out);
+
+		// set ouput key as Text and value as IntWritable
+		job.setMapOutputKeyClass(WordDocnameWritable.class);
+		job.setMapOutputValueClass(WordcountWordperdocWritable.class);
+		job.setOutputKeyClass(WordDocnameWritable.class);
+		job.setOutputValueClass(DoubleWritable.class);
+
+		// Partitioning/Grouping
+		job.setPartitionerClass(PartitionerCalculTfidf.class);
+		job.setGroupingComparatorClass(GroupingComparatorCalculTfidf.class);
+
+		// add Map as the Mapper used by the job
+		job.setMapperClass(MapperTfidfCalculTfidf.class);
+		job.setReducerClass(ReducerTfidfCalculTfidf.class);
+
+		job.setJarByClass(App.class);
+		job.waitForCompletion(true);
+	}
+
 }

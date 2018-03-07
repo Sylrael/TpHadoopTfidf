@@ -8,20 +8,29 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Writable;
 
 public class WordcountWordperdocWritable implements Writable {
-		private IntWritable wordCount = new IntWritable();
-		private IntWritable wordPerDoc = new IntWritable();
+	private IntWritable wordCount = new IntWritable();
+	private IntWritable wordPerDoc = new IntWritable();
 
-	
+	public WordcountWordperdocWritable() {
+
+	}
+
+	public WordcountWordperdocWritable(IntWritable wordCount, IntWritable wordPerDoc) {
+		super();
+		this.wordCount = wordCount;
+		this.wordPerDoc = wordPerDoc;
+	}
+
 	public void readFields(DataInput arg0) throws IOException {
 		wordCount.readFields(arg0);
-		wordPerDoc.readFields(arg0);		
+		wordPerDoc.readFields(arg0);
 	}
 
 	public void write(DataOutput arg0) throws IOException {
 		wordCount.write(arg0);
 		wordPerDoc.write(arg0);
 	}
-	
+
 	public IntWritable getWordCount() {
 		return wordCount;
 	}
@@ -40,7 +49,7 @@ public class WordcountWordperdocWritable implements Writable {
 
 	@Override
 	public String toString() {
-		return wordCount+"\t"+wordPerDoc;
-	}	
-	
+		return wordCount + "\t" + wordPerDoc;
+	}
+
 }
