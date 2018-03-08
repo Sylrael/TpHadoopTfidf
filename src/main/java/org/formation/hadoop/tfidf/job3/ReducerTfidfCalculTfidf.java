@@ -22,6 +22,7 @@ public class ReducerTfidfCalculTfidf
 
 	protected void reduce(WordDocnameWritable cle, Iterable<WordcountWordperdocWritable> valeurs, Context context)
 			throws IOException, InterruptedException {
+		tfidfmap = new HashMap<WordDocnameWritable, WordcountWordperdocWritable>();
 		int nbDocumentTotal = 2;
 		int nbDocumentPresent = 0;
 		for (WordcountWordperdocWritable value : valeurs) {

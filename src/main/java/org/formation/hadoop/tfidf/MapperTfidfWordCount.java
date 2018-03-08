@@ -27,10 +27,12 @@ public class MapperTfidfWordCount extends Mapper<LongWritable, Text, WordDocname
 		cachedFiles = context.getLocalCacheFiles();
 
 		// Creating Set of stopwords
-		BufferedReader fis = new BufferedReader(new FileReader(cachedFiles[0].toString()));
-		String stopword = "";
-		while ((stopword = fis.readLine()) != null) {
-			stopwordsList.add(stopword);
+		if (cachedFiles != null) {
+			BufferedReader fis = new BufferedReader(new FileReader(cachedFiles[0].toString()));
+			String stopword = "";
+			while ((stopword = fis.readLine()) != null) {
+				stopwordsList.add(stopword);
+			}
 		}
 	}
 
@@ -38,7 +40,7 @@ public class MapperTfidfWordCount extends Mapper<LongWritable, Text, WordDocname
 		StringTokenizer tokens = new StringTokenizer(value.toString(), "\" ,:();-.?!*+%/\\<>|_][{}0123456789\t");
 		// Retrieving name of file to treat
 		filename = ((FileSplit) context.getInputSplit()).getPath().getName();
-		
+
 		// Treating file
 		while (tokens.hasMoreTokens()) {
 			String mot = tokens.nextToken().toLowerCase();

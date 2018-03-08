@@ -7,6 +7,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.mapreduce.Counter;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
@@ -26,6 +27,11 @@ import org.formation.hadoop.tfidf.job3.ReducerTfidfCalculTfidf;
  *
  */
 public class App {
+	public static enum COUNTERS {
+		NB_LINES_OUTPUT_JOB1,
+		NB_LINES_INPUT_JOB2,
+		NB_LINES_OUTPUT_JOB2
+		}
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
 		System.out.println("Hello World!");
@@ -78,6 +84,8 @@ public class App {
 
 		job.setJarByClass(App.class);
 		job.waitForCompletion(true);
+		Counter nbLignesSortie = job.getCounters().findCounter(COUNTERS.NB_LINES_OUTPUT_JOB1);
+		System.out.println("Nombre de lignes de sorties = "+nbLignesSortie.getValue());
 	}
 
 	public static void launchJobWordPerDoc(Path in, Path out)
@@ -115,6 +123,10 @@ public class App {
 
 		job.setJarByClass(App.class);
 		job.waitForCompletion(true);
+		Counter nbLignesSortie2 = job.getCounters().findCounter(COUNTERS.NB_LINES_OUTPUT_JOB2);
+		System.out.println("Nombre de fichier en sortie = "+nbLignesSortie2.getValue());
+		Counter nbLignesEntree2 = job.getCounters().findCounter(COUNTERS.NB_LINES_INPUT_JOB2);
+		System.out.println("Nombre de fichier en entrée = "+nbLignesEntree2.getValue());
 	}
 
 	public static void launchJob3(Path in, Path out) throws IOException, ClassNotFoundException, InterruptedException {

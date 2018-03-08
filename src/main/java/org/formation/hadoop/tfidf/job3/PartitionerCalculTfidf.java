@@ -1,6 +1,5 @@
 package org.formation.hadoop.tfidf.job3;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.formation.hadoop.tfidf.WordDocnameWritable;
 import org.formation.hadoop.tfidf.WordcountWordperdocWritable;
@@ -9,7 +8,7 @@ public class PartitionerCalculTfidf extends Partitioner<WordDocnameWritable, Wor
 
 	@Override
 	public int getPartition(WordDocnameWritable key, WordcountWordperdocWritable value, int nbPartition) {
-		String naturalKey = key.getDocId().toString() ;
+		String naturalKey = key.getMot().toString() ;
 		return naturalKey.hashCode() % nbPartition;
 	}
 
