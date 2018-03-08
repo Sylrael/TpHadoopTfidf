@@ -44,12 +44,12 @@ public class App {
 		Path inputFilePath3 = new Path("tfidf/output/job2/part-r-00000");
 		Path outputFilePath3 = new Path("tfidf/output/job3");
 
-		// Job 1
-		//launchJobWordCount(inputFilePath, outputFilePath);
-		// Job 2
-		//launchJobWordPerDoc(inputFilePath2, outputFilePath2);
-		// Job 3
-		launchJob3(inputFilePath3, outputFilePath3);
+		// Job 1 : Word Count sur les fichiers en entrée avec filtering
+		launchJobWordCount(inputFilePath, outputFilePath);
+		// Job 2 : Calcul du nombre total de mots par documents
+		launchJobWordPerDoc(inputFilePath2, outputFilePath2); 
+		// Job 3 : Calcul du tfidf pour chaque mot
+		launchJobCalculTfidf(inputFilePath3, outputFilePath3);
 
 	}
 
@@ -123,17 +123,18 @@ public class App {
 
 		job.setJarByClass(App.class);
 		job.waitForCompletion(true);
+		
 		Counter nbLignesSortie2 = job.getCounters().findCounter(COUNTERS.NB_LINES_OUTPUT_JOB2);
-		System.out.println("Nombre de fichier en sortie = "+nbLignesSortie2.getValue());
+		System.out.println("Nombre de lignes en sortie = "+nbLignesSortie2.getValue());
 		Counter nbLignesEntree2 = job.getCounters().findCounter(COUNTERS.NB_LINES_INPUT_JOB2);
-		System.out.println("Nombre de fichier en entrée = "+nbLignesEntree2.getValue());
+		System.out.println("Nombre de lignes en entrée = "+nbLignesEntree2.getValue());
 	}
 
-	public static void launchJob3(Path in, Path out) throws IOException, ClassNotFoundException, InterruptedException {
+	public static void launchJobCalculTfidf(Path in, Path out) throws IOException, ClassNotFoundException, InterruptedException {
 		// Job configuration
-
 		Configuration conf = new Configuration();
 		Job job = new Job(conf, "TfIdfCalculTfIdf");
+		
 		FileSystem fs = FileSystem.newInstance(conf);
 
 		if (fs.exists(out)) {

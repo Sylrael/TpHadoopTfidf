@@ -3,6 +3,7 @@
 Job 1 complete : Calcul du nombre d'occurences des mots dans des documents
 
 Input : dossier contenant des fichiers textes (mobydick.txt et r_crusoe)
+
 (mise en cache du fichier stopwords_en pour skip des mots)
 
 Filtrer avec les critères suivants :
@@ -16,9 +17,11 @@ Sortie : fichier contenant des lignes avec clé <docname mot> et valeur <wordcou
 Job 2 complete : calcul du nombre total de mots par document et insertion en fin de lignes
 
 Input : fichier de sortie du job 1
+
 Output : Fichier contenant des lignes avec clé <docname mot< et valeur <wordcount wordperdoc>
 
 Job 3 complete : calcul du tf_idf pour chaque mot
 
 Input : fichier de sortie du job 2
+
 Output : fichier contenant des lignes avec clé <docname mot> et valeur <tf_idf>

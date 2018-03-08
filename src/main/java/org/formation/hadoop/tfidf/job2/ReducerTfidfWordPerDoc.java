@@ -25,7 +25,7 @@ public class ReducerTfidfWordPerDoc extends Reducer<WordDocnameWritable, IntWrit
 		// Mise en mémoire de chaque mot et le nombre d'occurence
 		for(IntWritable value : valeurs) {
 			System.out.println(cle);
-			// Attention aux références !
+			// Attention aux références ! Même référence, seul le contenu change
 			motsNboccurrenceMap.put(new WordDocnameWritable(new Text(cle.getMot()), new Text(cle.getDocId())), new IntWritable(value.get()));
 			count += value.get();
 			context.getCounter(COUNTERS.NB_LINES_INPUT_JOB2).increment(1);
